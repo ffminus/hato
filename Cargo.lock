@@ -3,5 +3,21 @@
 version = 3
 
 [[package]]
+name = "aligned-vec"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4aa90d7ce82d4be67b64039a3d588d38dbcc6736577de4a847025ce5b0c468d1"
+
+[[package]]
 name = "hato"
 version = "0.1.0"
+dependencies = [
+ "aligned-vec",
+ "unscrupulous",
+]
+
+[[package]]
+name = "unscrupulous"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01e39f447f47d762bee21ded18588ea199d68ee0ca1a1568ddb60dcdfdb662e3"
