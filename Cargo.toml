@@ -1,0 +1,14 @@
+[package]
+name         = "hato"
+version      = "0.1.0"
+authors      = ["ffminus <ffminus@protonmail.com"]
+edition      = "2021"
+description  = "Heterogeneous Arenas of Trait Objects."
+readme       = "README.md"
+repository   = "https://github.com/ffminus/hato"
+license      = "MIT"
+keywords     = ["arena", "data-structures", "memory"]
+categories   = ["data-structures", "memory-management"]
+
+
+[dependencies]
