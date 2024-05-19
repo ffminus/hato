@@ -113,12 +113,21 @@ macro_rules! hato {
                     #[allow(clippy::cast_possible_truncation)]
                     self.0[handle.index as usize].get_mut(handle.offset)
                 }
+
+                /// Remove the element identified by `handle` from the collection.
+                #[allow(dead_code)]
+                #[inline]
+                pub fn remove(&mut self, handle: Handle) {
+                    #[allow(clippy::cast_possible_truncation)]
+                    self.0[handle.index as usize].remove(handle.offset);
+                }
             }
 
             #[derive(Clone)]
             struct Arena {
                 vtable: *const u8,
                 bytes: AVec<u8>,
+                slots: Vec<$offset>,
             }
 
             impl Arena {
@@ -128,7 +137,11 @@ macro_rules! hato {
                     // ! stored at valid addresses, even on re-allocation events
                     let bytes = AVec::new(align_of::<T>());
 
-                    Self { vtable, bytes }
+                    Self {
+                        vtable,
+                        bytes,
+                        slots: Vec::new(),
+                    }
                 }
 
                 #[inline]
@@ -145,14 +158,29 @@ macro_rules! hato {
                     let slice = as_slice_of_bytes(&x);
 
                     // Position of the element in the buffer
-                    let offset = <$offset>::try_from(self.bytes.len())
-                        .expect("individual arenas to hold less than 4GB of data");
+                    let offset = if let Some(offset) = self.slots.pop() {
+                        // Offset is a valid `usize` by initial construction in previous `push`
+                        #[allow(clippy::cast_possible_truncation)]
+                        let offset_as_usize = offset as usize;
 
-                    // TODO: Replace with `extend_from_slice` from `aligned-vec` version 0.6.0
-                    // Copy object over to buffer, valid thanks to `Unscrupulous` trait bound
-                    for byte in slice {
-                        self.bytes.push(*byte);
-                    }
+                        // Copy object over to buffer, overwriting previous element
+                        self.bytes[offset_as_usize..offset_as_usize + align_of::<T>()]
+                            .copy_from_slice(slice);
+
+                        offset
+                    } else {
+                        // Fit byte offset in a `u32` to limit size of handles
+                        let offset = <$offset>::try_from(self.bytes.len())
+                            .expect("individual arenas to hold less than 4GB of data");
+
+                        // TODO: Replace with `extend_from_slice` from `aligned-vec` version 0.6.0
+                        // Copy object over to buffer, valid thanks to `Unscrupulous` trait bound
+                        for byte in slice {
+                            self.bytes.push(*byte);
+                        }
+
+                        offset
+                    };
 
                     // Prevent destructor from running on scope end
                     core::mem::forget(x);
@@ -180,6 +208,11 @@ macro_rules! hato {
 
                     // Mimick memory layout of trait objects with an array of pointers
                     [ptr, self.vtable]
+                }
+
+                #[inline]
+                fn remove(&mut self, offset: $offset) {
+                    self.slots.push(offset);
                 }
             }
 
