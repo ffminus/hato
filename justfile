@@ -11,4 +11,5 @@ check:
 
 # run code quality and logic checks
 ci: check
-    cargo test -- --test-threads 1
+    cargo      test -- --test-threads 1
+    cargo miri test -- --test-threads 1
