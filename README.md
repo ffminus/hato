@@ -44,6 +44,8 @@ fn main() {
 ```
 
 As with to bump allocators, [`Drop`] implementations will **not** be invoked on deallocation.
+If you need to run the logic contained in destructors,
+you can acquire a mutable reference with `get_mut`, and then call [`core::ptr::drop_in_place`].
 
 The macro offers some configuration options via named parameters:
 - vis: visibility of the declared types; private by default

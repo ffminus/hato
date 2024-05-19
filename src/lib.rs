@@ -105,6 +105,14 @@ macro_rules! hato {
                     #[allow(clippy::cast_possible_truncation)]
                     self.0[handle.index as usize].get(handle.offset)
                 }
+
+                /// Retrieve the element identified by `handle` as a mutable trait object.
+                #[allow(dead_code)]
+                #[inline]
+                pub fn get_mut(&mut self, handle: Handle) -> &mut dyn Interface {
+                    #[allow(clippy::cast_possible_truncation)]
+                    self.0[handle.index as usize].get_mut(handle.offset)
+                }
             }
 
             #[derive(Clone)]
@@ -154,6 +162,12 @@ macro_rules! hato {
 
                 #[inline]
                 fn get(&self, offset: $offset) -> &dyn Interface {
+                    // ! SAFETY: Trait object points to a valid byte representation of this type
+                    unsafe { transmute(self.get_as_array_of_pointers(offset)) }
+                }
+
+                #[inline]
+                fn get_mut(&mut self, offset: $offset) -> &mut dyn Interface {
                     // ! SAFETY: Trait object points to a valid byte representation of this type
                     unsafe { transmute(self.get_as_array_of_pointers(offset)) }
                 }
