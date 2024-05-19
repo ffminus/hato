@@ -1,6 +1,9 @@
 // Use `README.md` as documentation home page, to reduce duplication
 #![doc = include_str!("../README.md")]
 
+#[cfg(test)]
+mod tests;
+
 // Re-export dependencies to be used in macro invocations
 pub use aligned_vec;
 pub use unscrupulous;

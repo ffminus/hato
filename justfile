@@ -5,6 +5,10 @@ help:
 # lint and type check code with static analyzers
 check:
     cargo fmt --check
-    cargo clippy -- --deny warnings
-    cargo check
+    cargo clippy --tests -- --deny warnings
+    cargo check  --tests
     RUSTDOCFLAGS='--deny warnings' cargo doc
+
+# run code quality and logic checks
+ci: check
+    cargo test -- --test-threads 1
