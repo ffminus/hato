@@ -13,6 +13,7 @@ categories   = ["data-structures", "memory-management"]
 
 [dependencies]
 aligned-vec  = "0.5.0" # Vectors with custom alignment constraints
+paste        = "1.0"   # Combine identifiers in macros
 unscrupulous = "0.1.0" # Types as byte slices
 
 
