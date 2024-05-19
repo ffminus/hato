@@ -14,16 +14,32 @@ macro_rules! hato {
         $crate::hato!($interface, $arena, $handle, with_aba = true, vis = pub(self));
     };
 
+    ($interface:path, $arena:ident, $handle:ident, with_aba = true, wide_handles = true) => {
+        $crate::hato!($interface, $arena, $handle, with_aba = true, vis = pub(self), wide_handles = true);
+    };
+
     ($interface:path, $arena:ident, $handle:ident, with_aba = true, mod = $mod:ident) => {
         $crate::hato!($interface, $arena, $handle, with_aba = true, vis = pub(self), mod = $mod);
+    };
+
+    ($interface:path, $arena:ident, $handle:ident, with_aba = true, wide_handles = true, mod = $mod:ident) => {
+        $crate::hato!($interface, $arena, $handle, with_aba = true, vis = pub(self), wide_handles = true, mod = $mod);
     };
 
     ($interface:path, $arena:ident, $handle:ident, with_aba = true, vis = $visibility:vis) => {
         $crate::hato!($interface, $arena, $handle, with_aba = true, vis = $visibility, mod = _hato_mod);
     };
 
+    ($interface:path, $arena:ident, $handle:ident, with_aba = true, vis = $visibility:vis, wide_handles = true) => {
+        $crate::hato!($interface, $arena, $handle, with_aba = true, vis = $visibility, wide_handles = true, mod = _hato_mod);
+    };
+
     ($interface:path, $arena:ident, $handle:ident, with_aba = true, vis = $visibility:vis, mod = $mod:ident) => {
         $crate::hato!($interface, $arena, $handle, with_aba = true, vis = $visibility, mod = $mod, u32, u32);
+    };
+
+    ($interface:path, $arena:ident, $handle:ident, with_aba = true, vis = $visibility:vis, wide_handles = true, mod = $mod:ident) => {
+        $crate::hato!($interface, $arena, $handle, with_aba = true, vis = $visibility, mod = $mod, u64, u64);
     };
 
     ($interface:path, $arena:ident, $handle:ident, with_aba = true, vis = $visibility:vis, mod = $mod:ident, $index:ty, $offset:ty) => {

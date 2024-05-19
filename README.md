@@ -59,6 +59,7 @@ you can acquire a mutable reference with `get_mut`, and then call [`core::ptr::d
 The macro offers some configuration options via named parameters:
 - vis: visibility of the declared types; private by default
 - mod: name of the module used to declare the types; defaults to "_hato_mod"
+- wide_handles: indexes have a size of 8 bytes by default, this option raises this to 16 bytes
 
 Types produced by this macro are subject
 to the [ABA problem](https://en.wikipedia.org/wiki/ABA_problem).
