@@ -89,7 +89,10 @@ fn benchmark(c: &mut Criterion, name: &str, (boxes, arena, handles): Inputs) {
 
 /// Sum all elements stored in the arena.
 fn sum_arena((arena, handles): (&Hato<dyn AsI32>, &[Handle])) -> i32 {
-    handles.iter().map(|h| arena.get(*h).as_i32()).sum()
+    handles
+        .iter()
+        .map(|h| unsafe { arena.get(*h) }.as_i32())
+        .sum()
 }
 
 /// Sorting helps with the jump target prediction and cache.

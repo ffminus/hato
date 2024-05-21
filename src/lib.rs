@@ -93,13 +93,21 @@ impl<Trait: ?Sized + Pointee<Metadata = DynMetadata<Trait>>> Hato<Trait> {
     }
 
     /// Retrieve the element identified by `handle` as a trait object.
+    ///
+    /// # Safety
+    ///
+    /// The handle must originate from the same instance of `Hato`.
     #[inline]
     #[must_use]
-    pub fn get(&self, handle: Handle) -> &Trait {
+    pub unsafe fn get(&self, handle: Handle) -> &Trait {
         self.0[handle.index as usize].get(handle.offset)
     }
 
     /// Retrieve the element identified by `handle` as a mutable trait object.
+    ///
+    /// # Safety
+    ///
+    /// The handle must originate from the same instance of `Hato`.
     #[inline]
     #[must_use]
     pub fn get_mut(&mut self, handle: Handle) -> &mut Trait {
