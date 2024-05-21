@@ -4,6 +4,8 @@ use criterion::{black_box, criterion_main, Criterion};
 use dyn_clone::{clone_trait_object, DynClone};
 use rand::prelude::{Rng, SeedableRng, StdRng};
 
+use hato::{Handle, Hato};
+
 /// Trait with minimal logic, to focus benchmark on iteration and cloning.
 trait AsI32: DynClone {
     fn as_i32(&self) -> i32;
@@ -18,9 +20,6 @@ impl<T: Copy + Into<i32> + DynClone> AsI32 for T {
 // Ensure trait objects can be cloned, as this is the main use case of `hato`
 clone_trait_object!(AsI32);
 
-// Declare a heterogeneous arena with basic configuration
-hato::hato!(AsI32, Arena, Handle, with_aba = true);
-
 /// Fill vector and arena with a large number of trait objects.
 const N: usize = 100_000;
 
@@ -32,12 +31,14 @@ fn generate_then_benchmark(c: &mut Criterion) {
     benchmark(c, "with_aba", generate(&mut rng));
 }
 
-fn generate(rng: &mut StdRng) -> (Vec<Box<dyn AsI32>>, Arena, Vec<Handle>) {
+type Inputs = (Vec<Box<dyn AsI32>>, Hato<dyn AsI32>, Vec<Handle>);
+
+fn generate(rng: &mut StdRng) -> Inputs {
     // Basic approach of a vector of boxed trait objects
     let mut boxes = Vec::<Box<dyn AsI32>>::new();
 
     // Heterogeneous arena, with an external vector for handles
-    let (mut arena, mut handles) = (Arena::default(), Vec::new());
+    let (mut arena, mut handles) = (Hato::default(), Vec::new());
 
     // Fill collections with trait objects with randomized types
     for i in 0..N {
@@ -59,9 +60,7 @@ fn generate(rng: &mut StdRng) -> (Vec<Box<dyn AsI32>>, Arena, Vec<Handle>) {
     (boxes, arena, handles)
 }
 
-fn benchmark(c: &mut Criterion, name: &str, inputs: (Vec<Box<dyn AsI32>>, Arena, Vec<Handle>)) {
-    let (boxes, arena, handles) = inputs;
-
+fn benchmark(c: &mut Criterion, name: &str, (boxes, arena, handles): Inputs) {
     let _c = c.bench_function(&format!("{name} iterate boxes"), |b| {
         b.iter(|| black_box(&boxes).iter().map(|b| b.as_i32()).sum::<i32>());
     });
@@ -89,7 +88,7 @@ fn benchmark(c: &mut Criterion, name: &str, inputs: (Vec<Box<dyn AsI32>>, Arena,
 }
 
 /// Sum all elements stored in the arena.
-fn sum_arena((arena, handles): (&Arena, &[Handle])) -> i32 {
+fn sum_arena((arena, handles): (&Hato<dyn AsI32>, &[Handle])) -> i32 {
     handles.iter().map(|h| arena.get(*h).as_i32()).sum()
 }
 
