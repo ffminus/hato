@@ -36,6 +36,13 @@ let _z = arena.push(7_u16);
 ```
 
 
+Caveats
+-------
+- This crate requires unstable features, stay on version 0.1.0 if you cannot use nightly.
+- `Hato` groups objects by their virtual table, which is [duplicated across codegen units](https://doc.rust-lang.org/std/ptr/struct.DynMetadata.html). Building with `codegen-units = 1` can be worthwhile to reduce the number of separate arenas.
+- This collection is subject to the [ABA problem](https://en.wikipedia.org/wiki/ABA_problem). See type documentation for more details.
+
+
 Acknowledgements
 ----------------
 
