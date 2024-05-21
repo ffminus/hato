@@ -9,10 +9,12 @@ A bump allocator like [`bumpalo`](https://docs.rs/bumpalo/latest/bumpalo) will b
 similar benefits, but will not offer methods for memory reclamation.
 This can be limiting for workloads involving alternating insertions and deletions.
 
-Elements must implement the [Unscrupulous][`unscrupulous::Unscrupulous`] trait,
+Elements must implement
+the [Unscrupulous](https://docs.rs/unscrupulous/latest/unscrupulous/trait.Unscrupulous.html) trait,
 which makes cloning the arena fast, just a couple of `memcpy` calls per type of objects
-stored in the collection. Be aware that this is quite constraining; make sure your types
-fulfill the [requirements for the trait][`unscrupulous::Unscrupulous`].
+stored in the collection. Be aware that this is quite constraining; make sure your types fulfill
+the [requirements](https://docs.rs/unscrupulous/latest/unscrupulous/trait.Unscrupulous.html)
+for the trait.
 
 Typical usage looks like this:
 
@@ -40,7 +42,7 @@ Caveats
 -------
 - This crate requires unstable features, stay on version 0.1.0 if you cannot use nightly.
 - `Hato` groups objects by their virtual table, which is [duplicated across codegen units](https://doc.rust-lang.org/std/ptr/struct.DynMetadata.html). Building with `codegen-units = 1` can be worthwhile to reduce the number of separate arenas.
-- This collection is subject to the [ABA problem](https://en.wikipedia.org/wiki/ABA_problem). See type documentation for more details.
+- This collection is subject to the [ABA problem](https://en.wikipedia.org/wiki/ABA_problem). See [type documentation](https://docs.rs/hato/latest/hato/struct.Hato.html) for more details.
 
 
 Acknowledgements
